@@ -1,0 +1,34 @@
+# karpenter should create NodeClaim for pending pods
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: nginx
+  name: nginx
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nginx
+    spec:
+      affinity:
+        # nodeSelector did not work
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: karpenter.sh/capacity-type
+                    operator: Exists
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+status: {}
