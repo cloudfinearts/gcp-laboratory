@@ -26,6 +26,9 @@ resource "google_compute_firewall" "fw" {
   source_tags = ["lab"]
 }
 
+data "google_compute_default_service_account" "this" {
+}
+
 resource "google_compute_instance" "main" {
   name         = "${var.app}-vm"
   machine_type = var.machine_type
@@ -54,13 +57,12 @@ resource "google_compute_instance" "main" {
   }
 
   service_account {
-    # default GCE SA, OS config agent cannot access metadata server without SA
-    email  = "144911572436-compute@developer.gserviceaccount.com"
+    # OS config agent cannot access metadata server without SA
+    email  = data.google_compute_default_service_account.this.email
     scopes = ["cloud-platform"]
   }
 
   metadata = {
-    # key from PPT file has incorrect format, Puttygen can show proper key
     "ssh-keys" = "${var.ssh_user}:${file("../../credentials/mykey.pub")}"
     # enable OS config agent of VM manager service
     "enable-osconfig"         = "TRUE"

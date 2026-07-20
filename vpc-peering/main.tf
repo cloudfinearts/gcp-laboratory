@@ -7,8 +7,6 @@ locals {
   region  = "europe-central2"
 }
 
-# (network) tags are meaningful only within VPC where firewal rule is defined
-# peered VPCs are distinct networks
 resource "google_compute_network_peering" "global" {
   name         = "peering-global-vpc"
   network      = google_compute_network.global.id
@@ -23,7 +21,7 @@ resource "google_compute_network_peering" "local" {
 
 resource "google_dns_managed_zone" "main" {
   name = "${local.project}-private-zone"
-  # trailing dot required
+  # trailing dot for FQDN
   dns_name   = "costa.com."
   visibility = "private"
 

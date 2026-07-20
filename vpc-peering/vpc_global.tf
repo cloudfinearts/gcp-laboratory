@@ -5,13 +5,13 @@ resource "google_compute_network" "global" {
   routing_mode = "GLOBAL"
 }
 
+# AWS subnet spans over AZ whereas GCP subnet is regional
 resource "google_compute_subnetwork" "warsaw" {
   ip_cidr_range = "10.0.1.0/24"
   name          = "${local.project}-subnet-warsaw"
   network       = google_compute_network.global.id
   stack_type    = "IPV4_ONLY"
-  # AWS subnet operates at AZ whereas GCP subnet is regional
-  region = "europe-central2"
+  region        = "europe-central2"
 }
 
 resource "google_compute_subnetwork" "sydney" {
@@ -56,7 +56,7 @@ resource "google_compute_firewall" "global" {
   # applies to traffic to external IP address
   source_ranges = ["0.0.0.0/0"]
 
-  # default target (rule's egress traffic) for the rule is all instances or define target tags/SA
+  # default target (egress) for the rule is either all instances or defined target tags/SA
 }
 
 locals {
